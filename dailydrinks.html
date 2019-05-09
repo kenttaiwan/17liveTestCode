@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>dailydrinks</title>
+		<style>
+			body {
+				font-size: 2rem;
+				font-family: Meiryo, "微軟正黑體", "Microsoft JhengHei";
+			}
+			.ul-li-no-type {
+				list-style-type: none;
+			}
+			.smaller-font {
+				font-size: 1rem;
+			}
+		</style>
+	</head>
+
+	<body>
+		<h2>茶單</h2>
+		<div id="menu"></div>
+		<h3>訂單</h3>
+		<div id="order"></div>
+		<button onclick="resetOrder()">清空訂單</button>
+
+	</body>
+
+	<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.0.min.js"></script>
+	<script>
+		//menu資料
+		var menu = {
+			"1": {
+				"name": "熟成紅茶",
+				"price": "30",
+				"comment": ["解油", "茶味濃郁帶果香"]
+			},
+			"2": {
+				"name": "鴉片紅茶",
+				"price": "35",
+				"comment": ["去腥", "茶味較淡帶花香"]
+			},
+			"3": {
+				"name": "春芽綠茶",
+				"price": "35",
+				"comment": ["綠茶", "糸糸中帶點彔彔"]
+			}
+		}
+
+		var orders = {};
+
+		menuLoad();
+
+		function menuLoad() {
+			var ulForItems = $("<ul>").addClass("ul-li-no-type");
+			var ulForOrders = $("<ul>").addClass("ul-li-no-type");
+
+			$.each( menu, function( key, content ) {
+				var name = content.name;
+				var price = content.price;
+				var comment = content.comment;
+				var orderButton = $("<button onclick='order("+key+")'>+</button>");
+
+				//茶單區
+				var liForItem = $("<li>").text(name + " $" + price).append(orderButton);
+				var ulForComments = $("<ul>").addClass("smaller-font");
+				if(comment.length > 0) {
+					for(i in comment) {
+						ulForComments.append($("<li>").text(comment[i]));						
+					}
+				}
+				ulForItems.append(liForItem.append(ulForComments));
+
+				//訂單區
+				var deleteOrderButton = $("<button onclick='deleteOrder("+key+")'>-</button>");
+				var orderCount = $("<span id=o"+key+">0</span>")
+				var liForOrder = $("<li>").text(name + "：").append(orderCount).append(deleteOrderButton);
+				ulForOrders.append(liForOrder);
+			});
+			$("#menu").append(ulForItems);
+			$("#order").append(ulForOrders);
+		}
+
+		function order(item) {
+			if(!orders[item]) {
+				orders[item] = 1;
+			} else{
+				orders[item]++;
+			}
+			
+			$('#o'+item).text(orders[item]);
+		}
+
+		function deleteOrder(item){
+			if(!orders[item]) {
+				return true;
+			}
+
+			orders[item]--;
+			$('#o'+item).text(orders[item]);
+		}
+
+		function resetOrder() {
+			for(i in orders) {
+				orders[i] = 0;
+				$('#o'+i).text(orders[i]);
+			}
+		}
+	</script>
+</html>
